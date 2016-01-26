@@ -1,0 +1,1 @@
+java MiniLangCompiler.Main.Main -debug

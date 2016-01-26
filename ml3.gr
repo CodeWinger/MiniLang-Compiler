@@ -1,0 +1,90 @@
+Package MiniLangCompiler;
+
+Helpers
+  tab   = 9;
+  cr    = 13;
+  lf    = 10;
+  digit = ['0'..'9'];
+  lowercase = ['a'..'z'];
+  uppercase = ['A'..'Z'];
+  letter  = lowercase | uppercase;
+  idletter = letter;
+  idchar  = letter | digit;
+  punctuation = '?' | '.' | ',' | '!' ;
+  str = (letter | digit | punctuation | ' ')*;
+  quote = '"';
+  hashtag = '#';
+
+
+Tokens
+  eol   = cr | lf | cr lf;
+  blank = ' ' | tab;
+
+  equal = '=';
+  if = 'if';
+  then = 'then';
+  else = 'else';
+  endif = 'endif';
+  while = 'while';
+  do = 'do';
+  done = 'done';
+  print = 'print';
+  read = 'read';
+  var = 'var';
+  int = 'int';
+  float = 'float';
+  string = 'string';
+  semicolon = ';';
+  colon = ':';
+
+  comment = hashtag [[0 .. 0xffff] - [10 + 13]]* ( cr | lf | cr lf);
+
+  star  = '*';
+  slash = '/';
+  plus  = '+';
+  minus = '-';
+  l_par = '(';
+  r_par = ')';
+  int_number  = '0'| [digit-'0'] digit*;
+  float_number = '.' digit+ | '0' '.' digit* | [digit-'0'] digit* '.' digit*;
+
+  id    = idletter idchar*;
+  string_value = quote str quote;
+
+Ignored Tokens
+  blank, eol, comment;
+
+Productions
+
+    program = declaration* statement*;
+
+    statement  =   {assign}        id equal cst_exp semicolon
+                | {if_else}        if cst_exp then statement* else [else_stmts]:statement* endif
+                | {if}              if cst_exp then statement* endif
+                | {while_id}     while cst_exp         do statement* done
+                | {print}  print cst_exp semicolon
+                | {read}  read id semicolon; 
+
+    declaration =   {int_dec}  var id colon int semicolon
+                | {float_dec}  var id colon float semicolon
+                | {string_dec} var id colon string semicolon;
+
+    cst_exp = 
+                  {cst_plus}    cst_exp plus factor 
+                | {cst_minus}   cst_exp minus factor 
+                | {factor}      factor;
+
+    factor  =
+                  {cst_mult}    factor star sterm
+                | {cst_divd}    factor slash sterm 
+                | {term}        sterm;
+
+    sterm =  {term} term
+          | {sterm} minus sterm;
+          
+    term =
+             {cst_id}      id 
+            | {cst_int}     int_number
+            | {cst_float}   float_number
+            | {cst_string} string_value 
+            |  {paren} l_par cst_exp r_par;
