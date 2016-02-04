@@ -75,139 +75,121 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAProgram(AProgram node)
+    public void caseAProgramProg(AProgramProg node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAAssignStatement(AAssignStatement node)
+    public void caseAWhileStmt(AWhileStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAIfElseStatement(AIfElseStatement node)
+    public void caseAIfelseStmt(AIfelseStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAIfStatement(AIfStatement node)
+    public void caseAIfStmt(AIfStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAWhileIdStatement(AWhileIdStatement node)
+    public void caseAPrintStmt(APrintStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAPrintStatement(APrintStatement node)
+    public void caseAReadStmt(AReadStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAReadStatement(AReadStatement node)
+    public void caseAAssignStmt(AAssignStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAIntDecDeclaration(AIntDecDeclaration node)
+    public void caseAFloatDecl(AFloatDecl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAFloatDecDeclaration(AFloatDecDeclaration node)
+    public void caseAIntDecl(AIntDecl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAStringDecDeclaration(AStringDecDeclaration node)
+    public void caseAStringDecl(AStringDecl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseACstPlusCstExp(ACstPlusCstExp node)
+    public void caseAPlusExp(APlusExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseACstMinusCstExp(ACstMinusCstExp node)
+    public void caseAMinusExp(AMinusExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAFactorCstExp(AFactorCstExp node)
+    public void caseAMultExp(AMultExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseACstMultFactor(ACstMultFactor node)
+    public void caseADivdExp(ADivdExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseACstDivdFactor(ACstDivdFactor node)
+    public void caseAUnaryExp(AUnaryExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseATermFactor(ATermFactor node)
+    public void caseAParenExp(AParenExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseATermSterm(ATermSterm node)
+    public void caseAIdExp(AIdExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAStermSterm(AStermSterm node)
+    public void caseAIntExp(AIntExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseACstIdTerm(ACstIdTerm node)
+    public void caseAFloatExp(AFloatExp node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseACstIntTerm(ACstIntTerm node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseACstFloatTerm(ACstFloatTerm node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseACstStringTerm(ACstStringTerm node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAParenTerm(AParenTerm node)
+    public void caseAStringExp(AStringExp node)
     {
         defaultCase(node);
     }

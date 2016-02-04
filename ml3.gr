@@ -8,8 +8,8 @@ Helpers
   lowercase = ['a'..'z'];
   uppercase = ['A'..'Z'];
   letter  = lowercase | uppercase;
-  idletter = letter;
-  idchar  = letter | digit;
+  idletter = letter | '_';
+  idchar  = letter | digit | '_';
   punctuation = '?' | '.' | ',' | '!' ;
   str = (letter | digit | punctuation | ' ')*;
   quote = '"';
@@ -56,35 +56,91 @@ Ignored Tokens
 
 Productions
 
-    program = declaration* statement*;
+    program {-> prog} = [decs]:declaration* [stmts]:statement*
+                        {-> New prog.program([decs.decl], [stmts.stmt])};
 
-    statement  =   {assign}        id equal cst_exp semicolon
+    statement  {-> stmt} =   {assign}        id equal cst_exp semicolon
+                       {-> New stmt.assign(id, cst_exp.exp)}
                 | {if_else}        if cst_exp then statement* else [else_stmts]:statement* endif
+                       {-> New stmt.ifelse(cst_exp.exp, [statement.stmt], [else_stmts.stmt])}
                 | {if}              if cst_exp then statement* endif
-                | {while_id}     while cst_exp         do statement* done
+                        {-> New stmt.if(cst_exp.exp, [statement.stmt])}
+                | {while_id}     while cst_exp do statement* done
+                        {-> New stmt.while(cst_exp.exp,[statement.stmt])}
                 | {print}  print cst_exp semicolon
-                | {read}  read id semicolon; 
+                        {-> New stmt.print(cst_exp.exp)}
+                | {read}  read id semicolon
+                        {-> New stmt.read(id)}; 
 
-    declaration =   {int_dec}  var id colon int semicolon
+    declaration {-> decl} =   {int_dec}  var id colon int semicolon
+                                    { -> New decl.int(id)}
                 | {float_dec}  var id colon float semicolon
-                | {string_dec} var id colon string semicolon;
+                                    { -> New decl.float(id)}
+                | {string_dec} var id colon string semicolon
+                                    { -> New decl.string(id)};
 
-    cst_exp = 
+    
+
+
+    cst_exp  {-> exp} = 
                   {cst_plus}    cst_exp plus factor 
+                     {-> New exp.plus(cst_exp.exp,factor.exp)}
                 | {cst_minus}   cst_exp minus factor 
-                | {factor}      factor;
+                     {-> New exp.minus(cst_exp.exp,factor.exp)}
+                | {factor}      factor
+                     {-> factor.exp};
 
-    factor  =
+    factor  {-> exp} =
                   {cst_mult}    factor star sterm
+                      {-> New exp.mult(factor.exp,sterm.exp)}
                 | {cst_divd}    factor slash sterm 
-                | {term}        sterm;
+                      {-> New exp.divd(factor.exp,sterm.exp)}
+                | {sterm}        sterm
+                      {-> sterm.exp};
 
-    sterm =  {term} term
-          | {sterm} minus sterm;
+    sterm {-> exp} =  {term} term
+                        {-> term.exp} 
+                   |  {sterm} minus sterm
+                      {-> New exp.unary(sterm.exp)};
           
-    term =
-             {cst_id}      id 
+    term {-> exp} =
+              {cst_id}      id 
+                      {-> New exp.id(id)}
             | {cst_int}     int_number
+                      {-> New exp.int(int_number)}
             | {cst_float}   float_number
+                      {-> New exp.float(float_number)}
             | {cst_string} string_value 
-            |  {paren} l_par cst_exp r_par;
+                      {-> New exp.string(string_value)}
+            |  {paren} l_par cst_exp r_par
+                      {-> New exp.paren(cst_exp.exp)};
+
+Abstract Syntax Tree
+
+prog = {program} [d]:decl* [s]:stmt*;
+
+
+stmt = 
+    {while}   [l]:exp [r]:stmt*
+    |{ifelse} [l]:exp [m]:stmt* [r]:stmt*
+    |{if}      [l]:exp [r]:stmt*
+    |{print}  exp
+    |{read}   id
+    |{assign} [l]:id [r]:exp;
+
+decl = 
+    {float}  id
+    |{int}    id
+    |{string} id;
+
+exp = 
+    {plus}     [l]:exp [r]:exp
+  | {minus}    [l]:exp [r]:exp
+  | {mult}     [l]:exp [r]:exp 
+  | {divd}     [l]:exp [r]:exp 
+  | {unary}    exp
+  | {paren}    exp
+  | {id}       id 
+  | {int}   int_number
+  | {float} float_number
+  | {string} string_value;

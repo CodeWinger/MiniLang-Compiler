@@ -3,10 +3,13 @@ package MiniLangCompiler.Main;
 import MiniLangCompiler.parser.*;
 import MiniLangCompiler.lexer.*;
 import MiniLangCompiler.node.*;
+
 import java.io.*;
  
-class Main {
-  public static void main(String args[]) {
+class Main 
+{
+  public static void main(String args[]) 
+  {
 
 
     boolean debug = false;
@@ -17,21 +20,28 @@ class Main {
     }
 
     try {
-      System.out.println("Type in a tiny exp folowed by one or two Ctrl-d's:");
       Parser p = 
          new Parser (
            new Lexer (
               new PushbackReader(new InputStreamReader(new FileInputStream(args[1])))));
       
       Start tree = p.parse();
-      System.out.println("Valid Program");
+      
       /* pretty-print */
-      //System.out.println("\nThe result of evaluating:");
-      //PrettyPrinter.print(tree);
-
-      /* evaluate */
-      //System.out.println("\nis: " + Evaluator.eval(tree));
-
+      String[] tks = args[1].split("\\."); //{foo.min} becomes {foo,min}
+     
+      
+      print(tks[0] + ".pretty." + tks[1], PrettyPrinter.print(tree));
+      
+      /* symbol table*/
+      print(tks[0] +".symbol.txt", TypeChecker.check(tree));
+      
+      //generate code only if type system is valid
+      if ( !TypeChecker.isInvalid)
+	      /*c code generation*/
+	      print(tks[0]+ ".c", CodeGenerator.generate(tree,  TypeChecker.types));
+      
+      
     } 
    catch(Exception e) 
     { 
@@ -40,4 +50,20 @@ class Main {
           System.out.println(e);
     }
    }
+  
+  public static void print(String filename, String content)
+  {
+	PrintWriter out;
+	try 
+	{
+		out = new PrintWriter(filename);
+		out.println(content);
+	    out.flush();
+	    out.close();
+	} 
+	catch (FileNotFoundException e) 
+	{
+		e.printStackTrace();
+	} 
+  }
 }
